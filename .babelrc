@@ -1,4 +1,13 @@
 {
-    "presets": ["@babel/preset-env", "@babel/preset-react"]
-  }
-  
+  "presets": [
+    "@babel/preset-env"
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-react-jsx",
+      {
+        "pragma": "createElement" // Use your library's createElement function
+      }
+    ]
+  ]
+}

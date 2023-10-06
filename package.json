@@ -13,8 +13,11 @@
   "devDependencies": {
     "@babel/cli": "^7.23.0",
     "@babel/core": "^7.23.0",
+    "@babel/plugin-transform-react-jsx": "^7.22.15",
     "@babel/preset-env": "^7.22.20",
-    "@babel/preset-react": "^7.22.15",
-    "serve": "^14.2.1"
+    "babel-loader": "^9.1.3",
+    "serve": "^14.2.1",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
   }
 }
