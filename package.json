@@ -1,0 +1,20 @@
+{
+  "name": "toysreact",
+  "version": "1.0.0",
+  "description": "a toys for fun",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "serve . -p 3000"
+  },
+  "keywords": [],
+  "author": "yangxiyue",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.22.20",
+    "@babel/preset-react": "^7.22.15",
+    "serve": "^14.2.1"
+  }
+}
