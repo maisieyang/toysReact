@@ -118,8 +118,96 @@ function updateDOMProperties(dom, newProps) {
 
 ##  step5 并发模式 (Concurrent Mode): 
 理解React中的'work'的概念。将工作分割为小单元，并使用一个简单的循环调度它们，这个循环被称为"工作循环"。使用requestIdleCallback进行浏览器调度。
+
+1. 简介：
+
+传统的 React 渲染可能会长时间阻塞主线程，导致响应性减弱。
+并发模式为渲染工作提供了一种分块的方式，使应用程序感觉更快、更响应迅速。
+
+2. 它是如何工作的：
+
+React 的并发模式更像是一种原则而不是单一功能。
+它建立在 Fiber 架构之上，这允许 React 暂停工作（渲染）并稍后返回。
+React 可以在不立即提交更改到 DOM 的情况下处理多个任务（例如，获取数据、更新状态）。
+React 可以优先处理某些任务。例如，直接的用户输入和动画被赋予了高优先级。
+
+3. 益处：
+   
+可中断性：React 可以中断一个耗时的渲染以处理一个高优先级的事件。
+改进的数据获取：在并发模式下，React 可以在所有数据到达之前开始渲染，显示更快的初始渲染。
+选择性渲染：React 可以延迟从低优先级任务的渲染更新，并在适当的时候显示它们。
+
+
+4. 选择并发模式：
+
+React 提供了一个 createRoot API，让应用程序或应用程序的一部分选择并发模式。
+考虑因素和权衡：
+
+并发模式引入了更多的复杂性。
+
+
+``` js
+
+// 1. Use requestIdleCallback
+let tasks = [];
+
+function workLoop(deadline) {
+  while (tasks.length > 0) {
+    if (deadline.timeRemaining() > 0) {
+      tasks.pop()();
+    } else {
+      break;
+    }
+  }
+  
+  if (tasks.length > 0) {
+    requestIdleCallback(workLoop);
+  }
+}
+
+requestIdleCallback(workLoop);
+
+
+// 2. Create Basic Units of Work
+function addTask(task) {
+  tasks.push(task);
+}
+
+// 3.Implement a Basic Render
+function render(element, container) {
+  addTask(() => {
+    container.innerHTML = element;
+  });
+}
+
+
+```
+
+
 ##  step6 Fibers: 
-用迭代的渲染函数替换递归渲染函数。每个元素实例都将有一个"fiber"，表示其在工作循环中的位置。
+
+在引入 Fiber 之前，React 的更新过程是递归的，并且一旦开始就不能被打断。这在复杂的应用中可能会导致性能问题。Fiber 改变了这一点，它引入了一个更灵活的、可中断的更新机制，并为 React 提供了一种方式，使其可以更智能地分配和管理工作，提高了应用的响应能力。
+
+Fiber 是 React 16（也被称为 "React Fiber"）中引入的一个新的核心算法。它解决了 React 在大型应用中的一些性能问题，并为未来的功能提供了基础。为了理解为什么 React 团队决定引入 Fiber，我们需要深入了解其背后的动机和目标。
+
+为什么需要 Fiber？
+
+1. 非阻塞主线程：
+   
+   传统的 React 调和（reconciliation）算法是递归的，一旦开始就无法中断。这意味着如果有一个大型组件树需要重新渲染，主线程可能会被阻塞，导致界面卡顿。Fiber 的设计目标之一是使调和过程可以被中断和恢复，从而防止长时间的任务阻塞主线程。
+
+2. 提高应用的响应能力：
+   
+   应用的响应性是用户体验的关键部分。为了确保应用对用户输入、动画等活动作出快速响应，Fiber 引入了任务优先级的概念。这允许 React 更智能地决定哪些工作应该首先完成。
+
+3. 支持并发模式：
+   
+   React 的并发模式（Concurrent Mode）允许 React 同时处理多个任务，并根据它们的优先级适当地中断和恢复这些任务。这为框架提供了更大的灵活性，以优化复杂应用的性能。
+
+
+
+
+
 ##  step7 渲染和提交阶段 (Render and Commit Phases): 
 将渲染过程分为两个阶段。"渲染阶段"计算更改但不更新DOM，"提交阶段"执行DOM更新。
 ##  step8 协调 (Reconciliation): 
