@@ -1,5 +1,6 @@
 import { createElement } from "../lib/jsx";
-import { render } from "../lib/dom";
+import { concurrentRender,addHighPriorityTask,addLowPriorityTask }  from "../lib/dom";
+
 
 
 const element = (
@@ -9,8 +10,20 @@ const element = (
     </div>
   );
 
-const container = document.getElementById('root');
-render(element, container);
+  // Adding some tasks to demonstrate
+addHighPriorityTask(() => {
+  console.log("High Priority Task 1");
+});
 
-  
-// console.log(element);
+addLowPriorityTask(() => {
+  console.log("Low Priority Task 1");
+});
+
+addHighPriorityTask(() => {
+  console.log("High Priority Task 2");
+});
+
+
+const container = document.getElementById('root');
+
+concurrentRender(element, container);
